@@ -42,6 +42,4 @@ runParallel(dirs, build).then(()=>{
 })
 // const pkgDir = path.resolve(`packages`)
 console.log(dirs)
-console.log('---------')
 // console.log(pkgDir)
-console.log('---------')
