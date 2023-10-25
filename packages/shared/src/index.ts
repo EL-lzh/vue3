@@ -1,2 +1,4 @@
-const a = 1
-export default a
+const c = 1
+export {
+    c
+} 
