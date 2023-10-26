@@ -1,4 +1,6 @@
 import { isObject } from "@vue/shared"
+import { track } from "./effect"
+import { TrackOpTypes } from "./operations"
 import { reactive, readonly } from "./reactive"
 
 const get = createGetter() // 不是只读，深层遍历
@@ -39,6 +41,7 @@ function createGetter(isReadonly = false, shallow = false) {
 
     if (!isReadonly) {
       // 收集依赖
+      track(target, TrackOpTypes.GET, key)
     }
 
     // 浅层的情况直接返回第一层代理后的结果
@@ -64,7 +67,7 @@ function createSetter(shallow = false) {
         value: unknown, 
         receiver: object) {
             const result = Reflect.set(target, key, value, receiver)
-            
+
             return result
     }
 }
