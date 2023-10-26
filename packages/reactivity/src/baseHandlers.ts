@@ -6,11 +6,16 @@ const shallowGet =  createGetter(false, true) // 不是只读，浅层
 const readonlyGet = createGetter(true) //只读，深层遍历
 const shallowReadonlyGet =  createGetter(true, true) //只读，浅层
 
+const set = createSetter()
+const shallowSet = createSetter(true)
+
 export const reactiveHandlers = {
   get,
+  set
 }
 export const shallowReactiveHandlers = {
-  get: shallowGet
+  get: shallowGet,
+  set: shallowSet
 }
 export const readonlyHandlers = {
   get: readonlyGet,
@@ -20,7 +25,11 @@ export const readonlyHandlers = {
   }
 }
 export const shallowReadonlyHandlers = {
-  get: shallowReadonlyGet
+  get: shallowReadonlyGet,
+  set(target: object, key: any) {
+    console.warn(`Set operation on key "${String(key)}" failed: target is readonly.`,
+    target)
+  }
 }
 
 function createGetter(isReadonly = false, shallow = false) {
@@ -46,4 +55,16 @@ function createGetter(isReadonly = false, shallow = false) {
     }
     return res
   }
+}
+
+function createSetter(shallow = false) {
+    return function set(
+        target: object, 
+        key: string | symbol, 
+        value: unknown, 
+        receiver: object) {
+            const result = Reflect.set(target, key, value, receiver)
+            
+            return result
+    }
 }
