@@ -12,7 +12,7 @@ export function effect<T = any>(fn: () => T, options: any = {}) {
 }
 
 let uid = 0
-let activeEffect //当前的effect
+let activeEffect : Function | undefined //当前的effect
 const effectStack: any = []  // 创建栈结构
 
 function createReactEffect(fn: Function, options: any = {}) {
@@ -40,6 +40,24 @@ function createReactEffect(fn: Function, options: any = {}) {
 }
 
 // 收集effect
+const targetMap = new WeakMap()
 export function track(target: object, type: TrackOpTypes, key: unknown) {
+    if (activeEffect === undefined) {
+        return 
+    }
 
+    let depsMap = targetMap.get(target)
+    if (!depsMap) {
+        targetMap.set(target, (depsMap = new Map()))
+    }
+
+    let dep = depsMap.get(key)
+
+    if (!dep) {
+        depsMap.set(key, (dep = new Set()))
+    }
+
+    if (!dep.has(activeEffect)) {
+        dep.add(activeEffect)
+    }
 }
