@@ -1,4 +1,4 @@
-import { isObject } from "@vue/shared"
+import { isObject, isArray } from "@vue/shared"
 import { track } from "./effect"
 import { TrackOpTypes } from "./operations"
 import { reactive, readonly } from "./reactive"
@@ -68,6 +68,8 @@ function createSetter(shallow = false) {
         receiver: object) {
             const result = Reflect.set(target, key, value, receiver)
 
+            // 获取老值
+            const oldValue = (target as any)[key]
             return result
     }
 }
