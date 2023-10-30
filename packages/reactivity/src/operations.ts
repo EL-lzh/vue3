@@ -5,3 +5,11 @@ export const enum TrackOpTypes {
     HAS = 'has',
     INERATE = 'iterate'
 }
+
+
+export const enum TriggerOpTypes {
+    SET = 'set',
+    ADD = 'add',
+    DELETE = 'delete',
+    CLEAR = 'clear'
+}

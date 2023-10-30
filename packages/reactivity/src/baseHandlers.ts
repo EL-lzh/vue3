@@ -1,6 +1,6 @@
-import { isObject, isArray } from "@vue/shared"
-import { track } from "./effect"
-import { TrackOpTypes } from "./operations"
+import { isObject, isArray, isIntegerKey, hasOwn, hasChanged } from "@vue/shared"
+import { track, trigger } from "./effect"
+import { TrackOpTypes, TriggerOpTypes } from "./operations"
 import { reactive, readonly } from "./reactive"
 
 const get = createGetter() // 不是只读，深层遍历
@@ -66,10 +66,21 @@ function createSetter(shallow = false) {
         key: string | symbol, 
         value: unknown, 
         receiver: object) {
-            const result = Reflect.set(target, key, value, receiver)
 
             // 获取老值
             const oldValue = (target as any)[key]
+
+            const hadKey = isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key)
+
+            const result = Reflect.set(target, key, value, receiver)
+            if (!hadKey) {
+              //新增
+              trigger(target, TriggerOpTypes.ADD, key, value)
+            } else if (hasChanged(value, oldValue)) {
+              // 修改，且值有变动
+              trigger(target, TriggerOpTypes.SET, key, value, oldValue)
+            }
+            
             return result
     }
 }

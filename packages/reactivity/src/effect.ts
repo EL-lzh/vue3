@@ -1,4 +1,4 @@
-import { TrackOpTypes } from "./operations"
+import { TrackOpTypes, TriggerOpTypes } from "./operations"
 
 // 定义effect 收集依赖
 export function effect<T = any>(fn: () => T, options: any = {}) {
@@ -60,4 +60,13 @@ export function track(target: object, type: TrackOpTypes, key: unknown) {
     if (!dep.has(activeEffect)) {
         dep.add(activeEffect)
     }
+}
+
+export function trigger(target: object, type: TriggerOpTypes, key?:unknown, newValue?: unknown, oldValue?: unknown) {
+    const depsMap = targetMap.get(target)
+    if (!depsMap) {
+        return
+    }
+    let deps = []
+
 }
